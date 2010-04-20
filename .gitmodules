@@ -1,0 +1,3 @@
+[submodule "lib/art_filter"]
+	path = lib/art_filter
+	url = git://github.com/Adios/art_filter.git

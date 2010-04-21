@@ -1,0 +1,2 @@
+module VintagesHelper
+end

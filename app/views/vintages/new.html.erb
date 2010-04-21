@@ -1,0 +1,103 @@
+<div class="content">
+    <div class="canvas">
+      <div id="original">
+          <%= image_tag 'sample.jpg' %>
+      </div>
+      <div id="vintaged">
+          <a href="#"><%= image_tag 'sample.v.jpg' %></a>
+      </div>
+    </div>
+    <div class="panel-push"></div>
+    <div class="panel">
+        <% form_for :photo, :url => { :action => :create }, :html => { :target => 'real_upload', :multipart => true } do |f| %>
+          <div id="source-tab">
+              <div id="loading"></div>
+              <label for="photo[image]">Give me an image,</label><br>
+              <%= f.file_field :image %><br>
+              <span class="right">And I will <%= f.submit 'Do' %> it for you.</span>
+              <div class="clear"></div>
+              <a class="button" href="#setting-tab" title="go advanced!">→</a>
+          </div>
+          <div id="setting-tab" class="hide">
+              <div id="yellow"></div><br>
+              <div id="magenta"></div><br>
+              <div id="cyan"></div><br>
+              <p title="opacity of each layer.">
+              {
+                <label for="photo[yellow]">yellow:</label>
+                <%= f.text_field :yellow, :value => '59' %>%,
+                <label for="photo[magenta]">magenta:</label>
+                <%= f.text_field :magenta, :value => '20' %>%,
+                <label for="photo[cyan]">cyan:</label>
+                <%= f.text_field :cyan, :value => '17' %>%
+              }
+              (<a class="reset" href="#reset">reset</a>)
+              </p>
+              <a class="button" href="#source-tab" title="go back.">←</a>
+          </div>
+        <% end %>
+    </div>
+</div>
+<!-- control -->
+<iframe id="real_upload" style="display: none;"></iframe>
+<% content_for :title do %>
+    Vintager
+<% end %>
+<% content_for :head do %>
+    <%= stylesheet_link_tag 'vintage' %>
+<% end %>
+<% content_for :js_ready do %>
+$('#setting-tab div').each(function() {
+  $(this).slider({
+    value: $('#photo_' + $(this).attr('id')).val(),
+    range: 'min',
+    min: -1,
+    max: 101,
+    step: 1,
+    slide: function(e, ui) {
+        $('#photo_' + $(this).attr('id')).val($(this).slider("value"));
+    }
+  });
+});
+$('.panel a.button').click(function() {
+  $('#source-tab').toggleClass('hide');
+  $('#setting-tab').toggleClass('hide');
+  return false;
+});
+$('a.reset').click(function() {
+  $('#yellow').slider({value: 59});
+  $('#magenta').slider({value: 20});
+  $('#cyan').slider({value: 17});
+  $('#photo_yellow').val('59');
+  $('#photo_magenta').val('20');
+  $('#photo_cyan').val('17');
+  return false;
+});
+$('form').submit(function() {
+  $('#loading').fadeIn();
+});
+
+window.upload_ok = function(vintaged, thumbnail, original, width, height) {
+  $('#loading').fadeOut();
+  $('#original').fadeOut('fast', function() {
+    $(this).children().attr({src: original});
+    $(this).css({
+      top: ($('.canvas').height() - height - 2 - 10) / 2,
+      left: ($('.canvas').width() / 2 - width - 2 - 10) / 2
+    });
+    $(this).fadeIn(3000);
+  });
+  $('#vintaged').fadeOut('fast', function() {
+    $(this).find('a').attr({href: vintaged});
+    $(this).find('img').attr({src: thumbnail});
+    $(this).css({
+      top: ($('.canvas').height() - height - 2 - 10) / 2,
+      right: ($('.canvas').width() / 2 - width - 2 - 10) / 2
+    });
+    $(this).fadeIn(3000);
+  });
+}
+window.upload_fail = function() {
+  $('#loading').fadeOut();
+}
+<% end %>

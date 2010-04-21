@@ -1,0 +1,11 @@
+<html><head>
+<% javascript_tag do %>
+window.top.window.upload_ok(
+  '<%= vintage_path(@photo.image.original_filename) %>',
+  '<%= thumbnail_vintage_path(@photo.image.original_filename) %>',
+  '<%= original_vintage_path(@photo.image.original_filename) %>',
+  '<%= @dimension.width.to_i %>',
+  '<%= @dimension.height.to_i %>'
+);
+<% end %>
+</head><body></body></html>
